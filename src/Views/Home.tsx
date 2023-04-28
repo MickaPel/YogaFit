@@ -1,19 +1,5 @@
-import { useEffect, useState } from "react"
-import { Pose } from "../interfaces/Pose"
 
 const Home: React.FC = () => {
-
-    // const [dataPost, setDataPost] = useState<Post | null>(null)
-    // console.log(dataPost)
-
-    // useEffect(() => {
-    //     const getPosts = async() => {
-    //         const response = await fetch(`https://yoga-api-nzy4.onrender.com/v1/poses?name=butterfly`)
-    //         const data : Post = await response.json()
-    //         setDataPost(data)
-    //     }
-    //     getPosts()
-    // }, [])
 
     return (
         <div>

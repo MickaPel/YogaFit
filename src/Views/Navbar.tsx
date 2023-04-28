@@ -87,7 +87,7 @@ const Navbar = () => {
                             <div className="hidden lg:flex justify-end items-center relative">
                                 <input
                                     placeholder="Find a pose"
-                                    className="border-2 border-black bg-inherit rounded-xl w-80 placeholder:text-[#D4D68c] pl-2"
+                                    className="border-2 border-[#D4D68c] bg-inherit rounded-xl w-80 placeholder:text-[#D4D68c] pl-2"
                                     value={searchInput}
                                     onChange={(e) => searchPose(e)}
                                 />
@@ -109,7 +109,7 @@ const Navbar = () => {
                         </div>
                         <div className="hidden md:flex flex-row ml-5 font-bold text-lg md:text-xl">
                             <p className="cursor-pointer" onClick={() => navigate('/poses')}>Poses</p>
-                            <p className="ml-4 cursor-pointer" onClick={() => navigate('/programms')}>Programs</p>
+                            <p className="ml-4 cursor-pointer" onClick={() => navigate('/create-program')}>Programs</p>
                         </div>
                         <User size={30} className="ml-5 hidden md:block cursor-pointer" onClick={() => navigate('/profile')}/>
                     </div>
@@ -145,7 +145,7 @@ const Navbar = () => {
             {openMenu ?
                 <div className="flex flex-col items-center py-5 font-bold text-[#D4D68B] border-b-2  border-[#D4D68c]">
                     <p className="mb-3" onClick={() => redirectTo('poses')}>Poses</p>
-                    <p onClick={() => redirectTo('programms')}>Programs</p>
+                    <p onClick={() => redirectTo('create-program')}>Programs</p>
                 </div>
                 : <></>
             }

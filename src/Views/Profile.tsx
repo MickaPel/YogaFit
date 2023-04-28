@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../context/AuthContext"
 import { collection, getDocs } from "firebase/firestore"
-import { db } from "../firebase"
+import { auth, db } from "../firebase"
 
 interface UserProgramInfos {
   name: string | undefined | any,
@@ -114,8 +114,8 @@ const Profile = () => {
 }, [])
 
   return(
-      <div className="h-[calc(100vh-102px)] flex flex-col md:flex-row xl:mt-10">
-          <div className="flex flex-row md:flex-col justify-center md:justify-start mt-8 text-[#C9A95D] font-bold md:basis-1/3">
+      <div className="h-[calc(100vh-102px)] flex flex-col md:flex-row xl:pt-10">
+          <div className="flex flex-row md:flex-col justify-center md:justify-start pt-8 text-[#C9A95D] font-bold md:basis-1/3">
             <div className="w-full">
               <img 
                 src='https://media-mcetv.ouest-france.fr/wp-content/uploads/2014/10/Voir-et-revoir-Il-%C3%A9tait-une-voix-avec-la-voix-fran%C3%A7aise-de-laffreux-Eric-Cartman-dans-South-Park.jpg' 

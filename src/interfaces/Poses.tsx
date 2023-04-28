@@ -9,5 +9,4 @@ export interface PosesData {
     url_svg: string
     url_png: string
     url_svg_alt: string,
-    // poses: array
 }
