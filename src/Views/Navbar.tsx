@@ -72,7 +72,7 @@ const Navbar = () => {
         setSearchResultsDiv(data.filter((s) => s.english_name.toLowerCase().includes(e.target.value)))
     }
 
-    console.log(searchResultsDivMobile)
+    // console.log(searchResultsDivMobile)
 
     return (
         <div className="bg-gradient-to-t from-[#2a3c24] to-[#141D11]">

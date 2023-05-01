@@ -23,11 +23,11 @@ const Program: React.FC = () => {
 
     const [userPrograms, setUserPrograms] = useState<UserProgramInfos[]>([])
 
-    console.log(userPrograms)
+    // console.log(userPrograms)
 
     const handleFetchAll = async (): Promise<void> => { 
         // const colRef = collection(docRef, `${programmName}`)   
-        const querySnapshot = await getDocs(collection(db, `users`, `${currentUser?.uid}`, 'yftytr'));
+        const querySnapshot = await getDocs(collection(db, `users`, `${currentUser?.uid}`, 'pr1'));
         // console.log(querySnapshot)
         const poses = querySnapshot.docs.map((doc) => {
             const data = doc.data();
@@ -40,6 +40,7 @@ const Program: React.FC = () => {
                     }
                 }); 
                 setUserPrograms(poses); 
+                console.log('fetch')
 
 
         // console.log(currentUser?.uid)
@@ -55,11 +56,12 @@ const Program: React.FC = () => {
         // }
     }
 
-    
+    console.log('first', userPrograms)
 
     useEffect(() => {
         // getTodoItems()
         handleFetchAll()
+        
     }, [])
 
     const [timerRun, setTimerRun] = useState<boolean>(false)
@@ -68,24 +70,23 @@ const Program: React.FC = () => {
     const [seconds, setSeconds] = useState<number>(0)
     const [endMsg, setEndMsg] = useState<string>('')
 
-    console.log(count)
-    console.log(userPrograms?.length -2)
+    // console.log(count)
+    // console.log(userPrograms?.length -2)
 
     const alarm = new Audio(Beep);
 
     const running = () => {
-        setTimerRun(true)
+        // setTimerRun(true)
         setStart(true)
     }
     const pause = () => {
         setTimerRun(false)
     }
 
-    useEffect(() => {
+    var timer : ReturnType<typeof setInterval>;
 
-        var timer : ReturnType<typeof setInterval>;
-
-        if(timerRun){
+    const programTimer = () => {
+        // if(timerRun){
             timer = setInterval(() => {
                 setSeconds(userPrograms[count]?.time)
                 if(start === true) {
@@ -108,7 +109,14 @@ const Program: React.FC = () => {
                     setTimerRun(false)
                 }
             }, 100)
-        }
+        // }
+    }
+
+    useEffect(() => {
+
+        programTimer()
+
+        
 
         return () => {
             clearInterval(timer)

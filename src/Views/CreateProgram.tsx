@@ -49,7 +49,7 @@ const CreateProgram: React.FC = () => {
     const [message, setMessage] = useState<boolean>(false)
     const [userPrograms, setUserPrograms] = useState<UserProgramInfos[]>([])
 
-    console.log(userPrograms)
+    // console.log(userPrograms)
 
     const addExercice = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()

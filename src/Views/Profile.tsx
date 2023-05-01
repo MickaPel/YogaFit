@@ -17,18 +17,18 @@ interface UserProgramInfos {
   id: string | undefined
 }
 interface UserProgramInfos2 {
-  name: string | undefined,
-  id: string | undefined,
+  name: string,
+  // id: string | undefined,
   poses: {
-    name: string | undefined,
-    description: string | undefined,
-    time: number | undefined,
-    image: string | undefined,
-    id: string | undefined
-  }
+    name?: string;
+    description?: string;
+    time?: string;
+    image?: string;
+    id?: string;
+  }[]
 }
 interface UserProgramNames {
-  name: string | undefined,
+  name: string,
   id: string
 }
 
@@ -39,26 +39,30 @@ const Profile = () => {
   // const [userProgram, setUserProgram] = useState<UserProgramInfos[]>([])
   const [userPrograms, setUserPrograms] = useState
     <UserProgramInfos2[] 
-      | 
-    { name: any; 
-      id: string | undefined;
-      poses: {
-        name: string | undefined,
-        description: string | undefined,
-        time: number | undefined,
-        image: string | undefined,
-        id: string | undefined
-      }
-    }
+    //   | 
+    // { name: string,
+    //   id: string | undefined,
+    //   poses: {
+    //     name: string | undefined,
+    //     description: string | undefined,
+    //     time: number | undefined,
+    //     image: string | undefined,
+    //     id: string | undefined
+    //   }
+    // } 
     >([])
     
-  console.log(userPrograms)
+  
 
   const [names, setNames] = useState<UserProgramNames[]>([])
 
+  // console.log(names)
+  
+  // console.log(userPrograms[0].name === 'pr1')
+  // userPrograms.filter((item: UserProgramInfos2) => console.log(item.name !== 'pr1') )
 
 
-  const handleFetchAll = async (): Promise<void> => { 
+  const handleFetchAll = async () => { 
     // const colRef = collection(docRef, `${programmName}`)   
     
     const querySnapshot2 = await getDocs(collection(db, `users`, `${currentUser?.uid}`, 'Program Names'));
@@ -72,29 +76,12 @@ const Profile = () => {
             }); 
             setNames(names); 
 
+    // const test: 
+    // UserProgramInfos2[] = []
 
-    names.forEach(async(n) => {
-      const querySnapshot = await getDocs(collection(db, `users`, `${currentUser?.uid}`, `${n.name}`));
-      // console.log(querySnapshot)
-      const poses = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return { 
-                name: data.name, 
-                description: data.description, 
-                time: data.time, 
-                image: data.image,
-                id: doc.id,
-                }
-            }); 
-            console.log(poses)
-            // setUserPrograms(poses)
-            // setUserPrograms([...userPrograms, {name: n.name, poses} ]);
-            // userPrograms.push(poses)
-            // setUserPrograms(programm => [...programm, {name: n.name, poses}]); 
-            // setUserPrograms([...poses]); 
-    })
+    
 
-
+  
 
     // console.log(currentUser?.uid)
     // const docRef = doc(db, 'users', `${currentUser?.uid}`);
@@ -109,9 +96,64 @@ const Profile = () => {
     // }
   }
 
+
+  const test = () => {
+    names.forEach(async(n) => {
+      const querySnapshot = await getDocs(collection(db, `users`, `${currentUser?.uid}`, `${n.name}`));
+      // console.log(querySnapshot)
+      const poses 
+      // : 
+      // {name: string | undefined, id: string | undefined, description: string | undefined, time: number | undefined, image: string | undefined,} 
+      // UserProgramInfos[]
+      = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return { 
+                name: data.name, 
+                description: data.description, 
+                time: data.time, 
+                image: data.image,
+                id: doc.id,
+                }
+            }); 
+            // console.log(poses)
+            // setUserPrograms(poses)
+            // setUserPrograms([...userPrograms, {name: n.name, poses} ]);
+            // userPrograms.push(poses)
+            // if(userPrograms.filter((item: UserProgramInfos2) => item?.name !== n?.name)){
+              // setUserPrograms([...userPrograms,]); 
+              // console.log('test' + userPrograms)
+              // setUserPrograms([...userPrograms, {name: n.name, poses}]); 
+              
+              // test.push({name: n.name, poses})
+              // console.log(n)
+              const filter = userPrograms.filter((par) => par.name === n.name)
+              if(filter.length === 0){
+                
+                setUserPrograms([...userPrograms, {name: n.name, poses}])
+              }
+              
+              // console.log('test',test)
+              
+            // }
+            
+            // setUserPrograms([...poses]); 
+    })
+  }
+
   useEffect(() => {
-    // handleFetchAll()
+    handleFetchAll()
+
 }, [])
+
+  useEffect(() => {
+    
+    if(names.length !== 0){
+      console.log('names', names)
+      test()
+      
+    }
+    console.log('useeffect',userPrograms)
+}, [names, userPrograms])
 
   return(
       <div className="h-[calc(100vh-102px)] flex flex-col md:flex-row xl:pt-10">
@@ -137,16 +179,23 @@ const Profile = () => {
           </div>
           <div className="flex flex-col justify-start  text-[#D39E24] font-bold text-lg md:text-xl xl:text-2xl mt-10 md:basis-2/3">
             <h2 className="text-center">My Programs</h2>
-            {/* <ul>
+            <ul>
               {
-                userPrograms.map((pr) => {
+                userPrograms?.map((pr: UserProgramInfos2) => {
                   return(
-                    <></>
+                    <div>
+                      <p>{pr.name}</p>
+                      {/* {pr.poses.map((p: UserProgramInfos2) => {
+                        return(
+                          <p>{p.name}</p>
+                      )})} */}
+                    
+                    </div>
                   )
                 })
               }
 
-            </ul> */}
+            </ul>
           </div>
       </div>
   )
