@@ -47,6 +47,7 @@ const CreateProgram: React.FC = () => {
     const [errorName, setErrorName] = useState<boolean>(false)
     const [errorProgram, setErrorProgram] = useState<boolean>(false)
     const [message, setMessage] = useState<boolean>(false)
+    const [message2, setMessage2] = useState<boolean>(false)
     const [userPrograms, setUserPrograms] = useState<UserProgramInfos[]>([])
 
     // console.log(userPrograms)
@@ -105,10 +106,12 @@ const CreateProgram: React.FC = () => {
                         name: programmName
                 })
                 setMessage(true)
+                setMessage2(true)
                 setErrorName(false)
                 setErrorProgram(false)
                 setTimeout(() => {
                     setMessage(false)
+                    setMessage2(false)
                 }, 2000);
                 setTimeout(() => {
                     setNewProgram(true)
@@ -217,7 +220,7 @@ const CreateProgram: React.FC = () => {
 
     return (
         <div className="min-h-[calc(100vh-102px)] flex flex-col items-center">
-            {
+            {/* {
                 newProgram ?
                     <div>
                         <button onClick={() => setNewProgram(false)} className='py-1 px-2 sm:px-4 shadow-md shadow-stone-950/50 mt-10 sm:mt-10 rounded-md text-base sm:text-lg text-[#FFFC97] font-semibold border-2 border-[#FFFC97] hover:text-white hover:border-white hover:shadow-slate-200/50'>Create a new Programm</button>
@@ -225,7 +228,7 @@ const CreateProgram: React.FC = () => {
                             <p className="text-[#FFFC97] text-lg lg:text-xl font-bold underline decoration-2 underline-offset-4">My Programs</p>
                         </div>
                     </div>
-                :
+                : */}
                     <div className="w-5/6 mb-10">
                         <form
                         className="text-[#FFFC97] flex flex-col items-center "
@@ -301,6 +304,7 @@ const CreateProgram: React.FC = () => {
                                             <li className="flex flex-row items-center mt-4">
                                                 <img src={p.image} alt={p.name} className="w-10" />
                                                 <p className="ml-4">{p.name}</p>
+                                                <p className="ml-4">({p.time}s)</p>
                                             </li>
                                         )
                                     })}
@@ -315,10 +319,10 @@ const CreateProgram: React.FC = () => {
                             {errorProgram ? <p className="fade-in text-red-800 text-center mt-5">You need to add exercises to program !</p> : <></>}
                             <button onClick={(e) => addProgramm(e)} className='py-1 px-2 sm:px-4 shadow-md shadow-stone-950/50 mt-10 sm:mt-10 rounded-md text-base sm:text-lg text-[#FFFC97]  font-semibold border-2 border-[#FFFC97]  hover:text-white hover:border-white hover:shadow-slate-200/50'>Create Programm</button>
                             {message ? <p className="fade-in text-[#FFFC97] text-center mt-5">The program was created !</p> : <></>}
+                            {message2 ? <p className="fade-in text-[#FFFC97] text-center mt-5">Go to your Profile</p> : <></>}
                         </form>
                     </div>
-            }
-            
+            {/* } */}
         </div>
     )
 }
