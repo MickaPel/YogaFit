@@ -5,17 +5,11 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/index';
-import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { signUpUser } from '../firebase/auth';
+import { AppUserSignup } from '../interfaces/Login';
 
-type AppUser = {
-    pseudo: string;
-    email: string;
-    password: string;
-    passwordConfirmation: string;
-} 
-
-const Signup : React.FC = () => {
+const Signup: React.FC = () => {
 
     const navigate = useNavigate()
 
@@ -26,6 +20,7 @@ const Signup : React.FC = () => {
         setPassVisibility(!passVisibility)
     }
 
+    //signup conditions
     const formSchema = Yup.object().shape({
         pseudo: Yup.string()
             .required("This field is required")
@@ -42,17 +37,18 @@ const Signup : React.FC = () => {
     });
 
     //useForm call
-    const { register, handleSubmit, formState: { errors } } = useForm<AppUser>({
+    const { register, handleSubmit, formState: { errors } } = useForm<AppUserSignup>({
         mode: "onTouched",
         resolver: yupResolver(formSchema)
     });
 
-    const onSubmit = async(data: AppUser) => {
+    //email and password signup
+    const onSubmit = async (data: AppUserSignup) => {
         try {
             await signUpUser(data.pseudo, data.email, data.password)
             setConfirmation(true)
             setTimeout(() => {
-                setConfirmation(false)
+                navigate('/')
             }, 2000);
         } catch (error: any) {
             if (error.code === 'auth/email-already-in-use') {
@@ -61,15 +57,27 @@ const Signup : React.FC = () => {
         }
     }
 
-    return(
+    //google signup
+    const provider = new GoogleAuthProvider();
+
+    const googleSignIn = async () => {
+        await signInWithPopup(auth, provider)
+            .then(() => {
+                setTimeout(() => {
+                    navigate('/profile')
+                }, 2000);
+            }).catch((error) => {
+                console.log('User Sign In Failed', error.message);
+            });
+    }
+
+    return (
         <div className='min-h-[calc(100vh-102px)]'>
             <div className="flex flex-col items-center relative md:pt-10 text-[#FFFC97]">
                 <span className="flex-shrink mt-5 md:my-5 mx-4 text-xl md:text-2xl font-bold hover:underline">Signup</span>
             </div>
             <div className="flex justify-center mt-8">
-                <button type='button' className='flex w-40 mt-5 sm:w-96 mx-1 break-inside bg-[#8C9562] hover:bg-[#FFFC97] text-black border-2 border-black rounded-3xl px-6 py-1 sm:py-3 mb-4'
-                // onClick={googleSignIn}
-                >
+                <button type='button' className='flex w-40 mt-5 sm:w-96 mx-1 break-inside bg-[#8C9562] hover:bg-[#FFFC97] text-black border-2 border-black rounded-3xl px-6 py-1 sm:py-3 mb-4' onClick={googleSignIn}>
                     <div className='m-auto'>
                         <div className='flex items-center justify-start flex-1 space-x-4'>
                             <svg width='25' height='25' viewBox='0 0 24 24'>
@@ -83,9 +91,7 @@ const Signup : React.FC = () => {
             </div>
             <p className="flex justify-center sm:py-5 text-sm sm:text-xl text-[#FFFC97]">Or</p>
             <div className='text-[#FFFC97] pb-10'>
-                <form className="text-[#FFFC97]"
-                    onSubmit={handleSubmit(onSubmit)}
-                >
+                <form className="text-[#FFFC97]" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col items-center">
                         <div className='flex flex-row w-64 sm:w-72 md:w-96 xl:w-1/4 content-start'>
                             <label className="mt-5 mb-5 ml-2 text-base sm:text-lg opacity-98">Pseudo : </label>

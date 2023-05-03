@@ -10,7 +10,12 @@ export interface PosesData {
     url_png: string
     url_svg_alt: string,
 }
-
+export interface PoseInfos {
+    name: string | undefined,
+    description: string | undefined,
+    time: number | undefined,
+    image: string | undefined,
+}
 export interface UserProgramInfos {
     name: string,
     poses: {

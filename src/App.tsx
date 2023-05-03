@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Navbar from './Views/Navbar';
@@ -11,7 +11,6 @@ import Home from './Views/Home';
 import Footer from './Views/Footer';
 import Login from './Views/Login';
 import Signup from './Views/Signup';
-
 
 function App() {
 

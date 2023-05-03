@@ -5,11 +5,9 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import { signInUser } from '../firebase/auth';
-
-type AppUser = {
-    email: string;
-    password: string;
-} 
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../firebase';
+import { AppUserLogin } from '../interfaces/Login';
 
 const Login : React.FC = () => {
 
@@ -22,6 +20,7 @@ const Login : React.FC = () => {
         setPassVisibility(!passVisibility)
     }
 
+    //login conditions
     const formSchema = Yup.object().shape({
         email: Yup.string()
             .required("Ce champ est obligatoire")
@@ -33,24 +32,39 @@ const Login : React.FC = () => {
     });
 
     //useForm call
-    const { register, handleSubmit, formState: { errors } } = useForm<AppUser>({
+    const { register, handleSubmit, formState: { errors } } = useForm<AppUserLogin>({
         mode: "onTouched",
         resolver: yupResolver(formSchema)
     });
 
-    const onSubmit = async(data: AppUser) => {
-
+    //email and password login
+    const onSubmit = async(data: AppUserLogin) => {
         try {
             const userCredential = await signInUser(data.email, data.password)
-    
             if (userCredential) {
                 setConfirmation(true)
                 console.log(userCredential)
-                // navigate('/profile')
+                setTimeout(() => {
+                    navigate('/profile')
+                }, 2000);
             }
         } catch (error:any) {
             console.log('User Sign In Failed', error.message);
         }
+    }
+
+    //google login
+    const provider = new GoogleAuthProvider();
+
+    const googleSignIn = async () => {
+        await signInWithPopup(auth, provider)
+            .then(() => {
+                setTimeout(() => {
+                    navigate('/profile')
+                }, 2000);
+            }).catch((error) => {
+                console.log('User Sign In Failed', error.message);
+            });
     }
 
     return(
@@ -60,7 +74,7 @@ const Login : React.FC = () => {
             </div>
             <div className="flex justify-center mt-8">
                 <button type='button' className='flex w-40 mt-5 sm:w-96 mx-1 break-inside bg-[#8C9562] hover:bg-[#FFFC97] text-black border-2 border-black rounded-3xl px-6 py-1 sm:py-3 mb-4'
-                // onClick={googleSignIn}
+                onClick={googleSignIn}
                 >
                     <div className='m-auto'>
                         <div className='flex items-center justify-start flex-1 space-x-4'>

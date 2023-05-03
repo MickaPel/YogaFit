@@ -1,36 +1,23 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Search, X, Menu, User } from "react-feather"
 import { useNavigate } from "react-router-dom"
 import data from '../data.json'
-
-interface SearchResults {
-    id: number;
-    english_name: string;
-    sanskrit_name_adapted: string;
-    sanskrit_name: string;
-    level: string;
-    translation_name: string;
-    pose_description: string;
-    pose_benefits: string;
-    url_svg: string;
-    url_png: string;
-    url_svg_alt: string;
-}
+import { AuthContext } from "../context/AuthContext"
+import { PosesData } from "../interfaces/Poses"
 
 const Navbar = () => {
 
     const navigate = useNavigate()
 
+    const { currentUser } = useContext(AuthContext)
 
     const [searchIcon, setSearchIcon] = useState<boolean>(true)
     const [searchBar, setSearchBar] = useState<boolean>(false)
     const [searchInput, setSearchInput] = useState<string>('')
     const [searchResults, setSearchResults] = useState<boolean>(false)
-    const [searchResultsDiv, setSearchResultsDiv] = useState<SearchResults[]>([])
-    const [searchResultsDivMobile, setSearchResultsDivMobile] = useState<SearchResults[]>([])
+    const [searchResultsDiv, setSearchResultsDiv] = useState<PosesData[]>([])
+    const [searchResultsDivMobile, setSearchResultsDivMobile] = useState<PosesData[]>([])
     const [openMenu, setOpenMenu] = useState<boolean>(false)
-
-    // console.log(searchResults)
 
     const showSearchBar = () => {
         setSearchIcon(false)
@@ -72,8 +59,6 @@ const Navbar = () => {
         setSearchResultsDiv(data.filter((s) => s.english_name.toLowerCase().includes(e.target.value)))
     }
 
-    // console.log(searchResultsDivMobile)
-
     return (
         <div className="bg-gradient-to-t from-[#2a3c24] to-[#141D11]">
             <div className="flex flex-row items-center text-[#D4D68B]">
@@ -111,11 +96,27 @@ const Navbar = () => {
                             <p className="cursor-pointer" onClick={() => navigate('/poses')}>Poses</p>
                             <p className="ml-4 cursor-pointer" onClick={() => navigate('/create-program')}>Create Program</p>
                         </div>
-                        <User size={30} className="ml-5 hidden md:block cursor-pointer" onClick={() => navigate('/profile')}/>
+                        <User   
+                            size={30} 
+                            className="ml-5 hidden md:block cursor-pointer" 
+                            onClick={() => {
+                                if(currentUser === null){
+                                    navigate('/login')
+                                }else{
+                                    navigate('/profile')}
+                                }}/>
                     </div>
                 </div>
                 <div className="mr-2 md:hidden flex flex-row items-center">
-                    <User size={30} className="mr-3" onClick={() => navigate('/profile')}/>
+                    <User 
+                        size={30} 
+                        className="mr-3" 
+                        onClick={() => {
+                            if(currentUser === null){
+                                navigate('/login')
+                            }else{
+                                navigate('/profile')}
+                            }}/>
                     { openMenu === false ?
                         <Menu size={30} onClick={openTheMenu}/>
                         :
