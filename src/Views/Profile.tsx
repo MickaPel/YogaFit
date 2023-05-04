@@ -14,13 +14,24 @@ const Profile = () => {
 
   const navigate = useNavigate()
 
+  //user programs
   const [names, setNames] = useState<UserProgramNames[]>([])
   const [userPrograms, setUserPrograms] = useState<UserProgramInfos[]>([])
-  const [urlAvatar, setUrlAvatar] = useState<string | undefined>()
+
+  //delete program
   const [selectedProg, setSelectedProg] = useState<UserProgramInfos>()
   const [selectedProgName, setSelectedProgName] = useState<UserProgramNames[]>([])
   const [showModal, setShowModal] = useState(false);
 
+
+  //user avatar photo
+  const [urlAvatar, setUrlAvatar] = useState<string | undefined>()
+  const fileRef = useRef(null)
+  const [fileUpload, setFileUpload] = useState<FileList | null>(null)
+  const [disabled, setDisabled] = useState(false)
+  const [fileAdded, setFileAdded] = useState(false)
+  
+  //get names of programs
   const getProgramNames = async () => {
     const querySnapshot = await getDocs(collection(db, `users`, `${currentUser?.uid}`, 'Program Names'));
     const names = querySnapshot.docs.map((doc) => {
@@ -33,6 +44,12 @@ const Profile = () => {
     setNames(names);
   }
 
+  useEffect(() => {
+    getProgramNames()
+    // console.log('names', names)
+  }, [currentUser, selectedProgName])
+
+  //get programs by names
   const getUserPrograms = () => {
     names.forEach(async (n) => {
       const querySnapshot = await getDocs(collection(db, `users`, `${currentUser?.uid}`, `${n.name}`));
@@ -54,59 +71,45 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    getProgramNames()
-  }, [currentUser])
-
-  useEffect(() => {
+    // console.log('programs', names)
     if (names.length !== 0) {
       getUserPrograms()
     }
-  }, [names, userPrograms])
+  }, [names, userPrograms, selectedProgName])
 
+  //delete a programm
   const docRef = doc(db, 'users', `${currentUser?.uid}`);
   const progNameColRef = collection(docRef, `Program Names`)
   const progColRef = collection(docRef, `${selectedProg?.name}`)
 
-  
-
-  // console.log(selectedProg)
-  console.log(selectedProgName[0]?.id)
-  
   const openModal = (selectedProgram: UserProgramInfos) => {
     setShowModal(true)
     setSelectedProg(selectedProgram)
-    console.log(names)
-    console.log(selectedProg)
-    const filter = names.filter((n) => n.name === selectedProg?.name)
-    console.log(filter)
-    // if (filter.length !== 0) {
-      setSelectedProgName(filter);
-      // console.log('filter')
-    // }
-    
-    
-
   }
 
   const deleteProgram = async () => {
-    
-    await deleteDoc(doc(progNameColRef, `${selectedProgName[0]?.id}`))
-    
-    
-    selectedProg?.poses.forEach(async(item) => {
-      await deleteDoc(doc(progColRef, `${item.id}`))
-    })
-    // console.log(names)
-    // console.log(selectedProg?.name)
-    
-    
+    const filter = names.filter((n) => n.name === selectedProg?.name)
+    if (filter.length !== 0) {
+      setSelectedProgName(filter);
+    }
+    setShowModal(false)
 }
 
-  const fileRef = useRef(null)
-  const [fileUpload, setFileUpload] = useState<FileList | null>(null)
-  const [disabled, setDisabled] = useState(false)
-  const [fileAdded, setFileAdded] = useState(false)
+  useEffect(() => {
+    if(selectedProgName?.length > 0){
+      deleteDoc(doc(progNameColRef, `${selectedProgName[0]?.id}`)).then(() => {
+        setSelectedProgName([])
+      })
+      selectedProg?.poses.forEach(async(item) => {
+        await deleteDoc(doc(progColRef, `${item.id}`)).then(() => {
+        })
+      })
+    }
+  }, [selectedProgName])
 
+
+
+  //upload photos
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setDisabled(true);
@@ -130,7 +133,7 @@ const Profile = () => {
     }
   }
 
-  // Fetch initial products.
+  // fetch user profile photo.
   useEffect(() => {
     const getProfileAvatar = async () => {
       const imageRef = ref(storage, `images/${currentUser?.uid}`);
@@ -192,44 +195,35 @@ const Profile = () => {
               return (
                 <div key={id} className="relative flex flex-col items-center m-auto w-2/3 h-full lg:h-64 py-5 rounded border-2 border-[#D4D68B] cursor-pointer overflow-auto scrollbar-thin scrollbar-thumb-[#D4D68B]">
                   <p className="text-large underline underline-offset-4 pb-4 text-center" onClick={() => console.log(pr) }>{pr.name}</p>
-                  <button
-                                                    onClick={() => {
-                                                      // setSelectedProg(pr); 
-                                                      openModal(pr)}}
-                                                    className="
-                                                    absolute
-                                                    top-0 right-0 cursor-pointer">
-                                                    <X color="red" size={40}/>
-                                                </button>
-                  {pr.poses.map((p) => {
-                    return (
-                      <div className="flex flex-row pt-1 justify-center items-center">
-                        <img src={p.image} alt={p.name} className="w-8 xl:w-12 mr-2" />
-                        <p className="text-sm mr-1">{p.name}</p>
-                        <p className="text-sm">({p.time}s)</p>
-                      </div>
-                    )
-                  })}
+                  <button onClick={() => {openModal(pr)}} className="absolute top-0 right-0 cursor-pointer text-[#D4D68B]"><X  size={40}/></button>
+                    {pr.poses.map((p) => {
+                      return (
+                        <div key={p.id} className="flex flex-row pt-1 justify-center items-center">
+                          <img src={p.image} alt={p.name} className="w-8 xl:w-12 mr-2" />
+                          <p className="text-sm mr-1">{p.name}</p>
+                          <p className="text-sm">({p.time}s)</p>
+                        </div>
+                      )
+                    })}
                   <button onClick={() => navigate(`/program/${pr.name}`)} className='py-1 px-2 sm:px-4 w-24 shadow-md shadow-stone-950/50 mt-4 sm:mt-6 rounded-md text-base sm:text-lg text-[#FFFC97] font-semibold border-2 border-[#FFFC97]  hover:text-white hover:border-white hover:shadow-slate-200/50 flex flex-row items-center justify-center'>Start<ArrowRight className="text-[#FFFC97] mt-1" size={25}/></button>
                 </div>
               )
             })
           }
         </div>
-        <button onClick={deleteProgram}>de</button>
       </div>
       {showModal ? (
         <>
           <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className="relative w-auto md:w-72 my-6 mx-auto max-w-3xl">
+            <div className="relative w-64 md:w-72 my-6 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-[#87a330] outline-none focus:outline-none">
                 <div className="flex items-end justify-end p-5">
                   <button
                     className="bg-transparent border-0 text-black float-right"
                     onClick={() => setShowModal(false)}
                   >
-                    <span className="text-black opacity-7 h-6 w-6 text-xl block py-0 rounded-full">
-                      <X />
+                    <span className="text-[#D4D68B] opacity-7 h-6 w-6 text-xl block rounded-full">
+                      <X size={30}/>
                     </span>
                   </button>
                 </div>
@@ -240,7 +234,7 @@ const Profile = () => {
                   <button
                     className="text-[#D39E24] bg-[#2a3c24] active:bg-yellow-700 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => deleteProgram()}
                   >
                     Delete
                   </button>

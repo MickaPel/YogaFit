@@ -23,9 +23,7 @@ const LevelFilter = (poseLevel: string) => {
     }
 
     useEffect(() => {
-
         pose()
-
     }, [poseLevel])
 
     return [filteredPoses]

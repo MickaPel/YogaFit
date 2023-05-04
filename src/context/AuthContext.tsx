@@ -11,7 +11,7 @@ export const AuthContext = createContext({
     currentUser: {} as User | null,
     setCurrentUser: (_user:User) => {},
     signOut: () => {},
-    deleteUser: (_user:User) => {}
+    // deleteUser: (_user:User) => {}
 })
 
 export const AuthProvider = ({ children }: Props) => {
@@ -33,15 +33,15 @@ export const AuthProvider = ({ children }: Props) => {
         navigate('/')
     }
 
-    const deleteUser = (user : User) => {
-        DeleteUser(user)
-    }
+    // const deleteUser = (user : User) => {
+    //     DeleteUser(user)
+    // }
 
     const value = {
         currentUser, 
         setCurrentUser,
         signOut,
-        deleteUser
+        // deleteUser
     }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
