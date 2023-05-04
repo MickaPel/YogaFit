@@ -43,7 +43,6 @@ const Login : React.FC = () => {
             const userCredential = await signInUser(data.email, data.password)
             if (userCredential) {
                 setConfirmation(true)
-                console.log(userCredential)
                 setTimeout(() => {
                     navigate('/profile')
                 }, 2000);

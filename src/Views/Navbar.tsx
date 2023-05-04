@@ -76,7 +76,7 @@ const Navbar = () => {
                                     value={searchInput}
                                     onChange={(e) => searchPose(e)}
                                 />
-                                {searchInput === '' ? <></> : <X size={24} className="absolute mr-1 w-10" onClick={() => setSearchInput('')}/>}
+                                {searchInput === '' ? <></> : <X size={24} className="absolute mr-1 w-10" onClick={() => {setSearchInput(''); setSearchResults(false)}}/>}
                                 {searchResults ?
                                     <div className="absolute flex flex-col items-center left-0 right-0 top-8 ml-auto mr-auto w-2/3 sm:w-1/2 md:w-1/3 lg:w-80 text-[#243010] bg-yellow-100 rounded divide-y">
                                         {searchResultsDiv.slice(0,5).map((res) => {
